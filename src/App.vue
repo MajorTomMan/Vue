@@ -22,7 +22,12 @@ import UserPinia from './components/UserPinia.vue';
 </script>
 
 <template>
-  <UserPinia />
+  <!-- <UserPinia /> -->
+  <nav>
+    <router-link to="/">Home</router-link> |
+    <router-link to="/about">About</router-link>
+  </nav>
+  <router-view></router-view>
 </template>
 
 <style scoped></style>
