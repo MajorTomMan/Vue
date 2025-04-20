@@ -1,7 +1,7 @@
 <!--
  * @Date: 2025-04-13 16:05:35
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2025-04-13 21:20:26
+ * @LastEditTime: 2025-04-20 11:59:35
  * @FilePath: \myvue\src\App.vue
  * @Description: MajorTomMan @版权声明 保留文件所有权利
 -->
@@ -19,15 +19,36 @@ import Watch from './components/Watch.vue';
 import Hooks from './components/Hooks.vue';
 import FatherPinia from './components/FatherPinia.vue';
 import UserPinia from './components/UserPinia.vue';
+
+import dynamicRouter from './ts/dynamicRouter';
+const handleClick = () => {
+  dynamicRouter.push({ name: "child" })
+}
 </script>
 
 <template>
   <!-- <UserPinia /> -->
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+  <!--   <nav>
+    <RouterLink to="/">Home</RouterLink>
+    <RouterLink to="/about">About</RouterLink>
   </nav>
-  <router-view></router-view>
+  <router-view></router-view> -->
+  <RouterLink :to="{ name: 'user', params: { id: 123 } }">user</RouterLink><br>
+  <RouterLink :to="{ name: 'home', params: {} }">home</RouterLink><br>
+  <button @click="handleClick">child</button><br>
+  <Transition name="fade" mode="out-in">
+    <RouterView></RouterView>
+  </Transition>
 </template>
 
-<style scoped></style>
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
