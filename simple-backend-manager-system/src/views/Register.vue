@@ -1,7 +1,7 @@
 <!--
  * @Date: 2025-04-20 18:31:14
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2025-04-20 21:34:13
+ * @LastEditTime: 2025-04-20 22:13:17
  * @FilePath: \simple-backend-manager-system\src\views\Register.vue
  * @Description: MajorTomMan @版权声明 保留文件所有权利
 -->
@@ -35,7 +35,6 @@ const handleRegister = (event) => {
     user.setUserName(username.value)
     user.setPassword(password.value)
     user.setRegister(true)
-    user.setLogin(true)
     router.push({ name: "home" })
 }
 </script>
