@@ -1,7 +1,7 @@
 /*
  * @Date: 2025-04-20 12:53:34
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2025-04-20 22:16:36
+ * @LastEditTime: 2025-04-26 18:44:18
  * @FilePath: \simple-backend-manager-system\src\router\index.ts
  * @Description: MajorTomMan @版权声明 保留文件所有权利
  */
@@ -12,6 +12,7 @@ import { useUserStore } from '../stores/user';
 import { storeToRefs } from 'pinia';
 import Register from '../views/Register.vue';
 import Layout from '../layouts/Layout.vue';
+import UserList from '../views/UserList.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -42,7 +43,12 @@ const router = createRouter({
         {
           path: "",
           component: Home,
-          name : "home"
+          name: "home"
+        },
+        {
+          path: "/userlist",
+          component: UserList,
+          name: "userlist"
         }
       ]
     }, {

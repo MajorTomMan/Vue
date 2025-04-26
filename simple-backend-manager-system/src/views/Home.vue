@@ -1,13 +1,16 @@
 <!--
  * @Date: 2025-04-20 18:31:25
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2025-04-20 21:56:55
+ * @LastEditTime: 2025-04-26 19:07:44
  * @FilePath: \simple-backend-manager-system\src\views\Home.vue
  * @Description: MajorTomMan @版权声明 保留文件所有权利
 -->
 <template>
-    <p>home</p>
-    <button @click="handleQuit">quit</button>
+    <div class="home">
+        <p>home</p>
+        <button @click="handleQuit">quit</button>
+    </div>
+
 </template>
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
