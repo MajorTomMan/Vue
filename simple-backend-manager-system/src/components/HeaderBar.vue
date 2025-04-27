@@ -1,45 +1,60 @@
 <!--
  * @Date: 2025-04-20 22:08:47
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2025-04-20 22:09:36
- * @FilePath: \simple-backend-manager-system\src\components\HeaderBar.vue
+ * @LastEditTime: 2025-04-27 23:01:35
+ * @FilePath: \Vue\simple-backend-manager-system\src\components\HeaderBar.vue
  * @Description: MajorTomMan @版权声明 保留文件所有权利
 -->
 <template>
-    <div class="bar">
-        欢迎你，{{ user.username }}
-        <button @click="quit">退出</button>
+  <el-header class="header">
+    <div class="logo">Simple Backend Manager</div>
+    <div class="header-right">
+      <el-dropdown>
+        <span class="el-dropdown-link">
+          Admin <el-icon><arrow-down /></el-icon>
+        </span>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item>个人中心</el-dropdown-item>
+            <el-dropdown-item divided>退出登录</el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
     </div>
+  </el-header>
 </template>
 
 <script setup lang="ts">
+import { ArrowDown } from '@element-plus/icons-vue'
 import { useUserStore } from '../stores/user'
 import { useRouter } from 'vue-router'
 
 const user = useUserStore()
 const router = useRouter()
 const quit = () => {
-    user.setLogin(false)
-    router.push({ name: "login" })
+  user.setLogin(false)
+  router.push({ name: "login" })
 }
 </script>
 
 <style scoped>
-.bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #545c64;
+  color: #fff;
+  padding: 0 20px;
 }
 
-button {
-    padding: 6px 12px;
-    background-color: #e74c3c;
-    color: white;
-    border: none;
-    cursor: pointer;
+.logo {
+  font-size: 20px;
+  font-weight: bold;
 }
 
-button:hover {
-    background-color: #c0392b;
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
 </style>

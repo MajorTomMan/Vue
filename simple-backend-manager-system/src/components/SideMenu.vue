@@ -1,17 +1,22 @@
 <!--
  * @Date: 2025-04-20 18:31:51
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2025-04-26 19:06:38
- * @FilePath: \simple-backend-manager-system\src\components\SideMenu.vue
+ * @LastEditTime: 2025-04-27 22:59:23
+ * @FilePath: \Vue\simple-backend-manager-system\src\components\SideMenu.vue
  * @Description: MajorTomMan @版权声明 保留文件所有权利
 -->
 <template>
-    <div class="menu">
-        <RouterLink :to="{ name: 'home' }">首页</RouterLink><br>
-        <RouterLink :to="{ name: 'userlist' }">用户列表</RouterLink><br>
-
-        <!-- 后续可以加更多 -->
-    </div>
+  <el-menu default-active="1" class="el-menu-vertical-demo" background-color="#545c64" text-color="#fff"
+    active-text-color="#ffd04b" router>
+    <el-menu-item index="/home">
+      <i class="el-icon-menu"></i>
+      <span>仪表盘</span>
+    </el-menu-item>
+    <el-menu-item index="/userlist">
+      <i class="el-icon-user"></i>
+      <span>用户管理</span>
+    </el-menu-item>
+  </el-menu>
 </template>
 
 <script setup lang="ts"></script>
