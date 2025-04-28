@@ -1,14 +1,14 @@
 <!--
  * @Date: 2025-04-20 18:31:51
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2025-04-27 22:59:23
+ * @LastEditTime: 2025-04-28 22:35:39
  * @FilePath: \Vue\simple-backend-manager-system\src\components\SideMenu.vue
  * @Description: MajorTomMan @版权声明 保留文件所有权利
 -->
 <template>
   <el-menu default-active="1" class="el-menu-vertical-demo" background-color="#545c64" text-color="#fff"
     active-text-color="#ffd04b" router>
-    <el-menu-item index="/home">
+    <el-menu-item index="/dashboard">
       <i class="el-icon-menu"></i>
       <span>仪表盘</span>
     </el-menu-item>

@@ -1,8 +1,8 @@
 /*
  * @Date: 2025-04-20 12:53:34
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2025-04-26 18:44:18
- * @FilePath: \simple-backend-manager-system\src\router\index.ts
+ * @LastEditTime: 2025-04-28 22:34:47
+ * @FilePath: \Vue\simple-backend-manager-system\src\router\index.ts
  * @Description: MajorTomMan @版权声明 保留文件所有权利
  */
 import { createRouter, createWebHistory } from 'vue-router'
@@ -14,6 +14,7 @@ import Register from '../views/Register.vue';
 import Layout from '../layouts/Layout.vue';
 import UserList from '../views/UserList.vue';
 import RoleList from '@/views/RoleList.vue';
+import Dashboard from '@/views/Dashboard.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -28,7 +29,7 @@ const router = createRouter({
       }
     },
     {
-      path: "/home", component: Layout, beforeEnter: (to, from, next) => {
+      path: "/dashboard", component: Layout, beforeEnter: (to, from, next) => {
         const { islogin, isRegister } = storeToRefs(useUserStore())
         if (!isRegister.value) {
           console.log("未注册")
@@ -43,8 +44,8 @@ const router = createRouter({
       }, children: [
         {
           path: "",
-          component: Home,
-          name: "home"
+          component: Dashboard,
+          name: "dashboard"
         },
         {
           path: "/userlist",

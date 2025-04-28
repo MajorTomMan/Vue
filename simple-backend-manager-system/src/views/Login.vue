@@ -1,8 +1,8 @@
 <!--
  * @Date: 2025-04-20 18:31:14
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2025-04-20 22:01:36
- * @FilePath: \simple-backend-manager-system\src\views\Login.vue
+ * @LastEditTime: 2025-04-28 22:36:18
+ * @FilePath: \Vue\simple-backend-manager-system\src\views\Login.vue
  * @Description: MajorTomMan @版权声明 保留文件所有权利
 -->
 <template>
@@ -39,7 +39,7 @@ const handleLogin = (event) => {
     user.setUserName(username.value)
     user.setPassword(password.value)
     user.setLogin(true)
-    router.push({ name: "home" })
+  router.push({ name: "dashboard" })
 }
 </script>
 
