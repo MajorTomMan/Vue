@@ -13,6 +13,7 @@ import { storeToRefs } from 'pinia';
 import Register from '../views/Register.vue';
 import Layout from '../layouts/Layout.vue';
 import UserList from '../views/UserList.vue';
+import RoleList from '@/views/RoleList.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -49,6 +50,11 @@ const router = createRouter({
           path: "/userlist",
           component: UserList,
           name: "userlist"
+        },
+        {
+          path: "/rolelist",
+          component: RoleList,
+          name: "rolelist"
         }
       ]
     }, {

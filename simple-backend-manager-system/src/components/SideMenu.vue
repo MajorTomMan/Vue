@@ -16,6 +16,10 @@
       <i class="el-icon-user"></i>
       <span>用户管理</span>
     </el-menu-item>
+    <el-menu-item index="/rolelist">
+      <i class="el-icon-role"></i>
+      <span>角色管理</span>
+    </el-menu-item>
   </el-menu>
 </template>
 

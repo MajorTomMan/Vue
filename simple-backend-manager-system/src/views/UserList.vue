@@ -10,10 +10,9 @@
     <input v-model="searchKeyword" placeholder="Search users..." />
     <div>
       <input v-model="newName" placeholder="Name" />
-      <input v-model="newRole" placeholder="Role" />
       <button @click="handleAddUser">添加用户</button>
     </div>
-    <el-table :data="newUsers" border style="width: 100%">
+    <el-table :loading="loading" :data="newUsers" border style="width: 100%">
       <el-table-column prop="id" label="Id" />
       <el-table-column prop="name" label="Name" />
       <el-table-column label="操作">
@@ -40,11 +39,11 @@
 import { computed, onMounted, ref, watchEffect } from 'vue';
 import { getUsers, type User } from "../mock/data.ts"
 
+const loading = ref(false);
 const users = ref<User[]>([])
 const searchKeyword = ref("");
 const newUsers = ref<User[]>([])
 const newName = ref("")
-const newRole = ref("")
 const pageSize = 5;
 let currentPage = ref(1);
 let start = 0;
@@ -64,7 +63,7 @@ watchEffect(() => {
   newUsers.value = filteredUsers.value.slice(start, end);
 });
 const handleAddUser = () => {
-  if (newName.value == "" || newRole.value == "") {
+  if (newName.value == "") {
     console.log("用户名或者角色名为空")
     return;
   }
@@ -76,7 +75,6 @@ const handleAddUser = () => {
   }
   users.value.push(newUser)
   newName.value = ""
-  newRole.value = ""
   newUsers.value = filteredUsers.value.slice(start, end);
 }
 const handleRemoveUser = (id: number) => {
@@ -110,8 +108,10 @@ const requestPreviousPage = () => {
   newUsers.value = filteredUsers.value.slice(start, end);
 }
 onMounted(async () => {
-  const result = await getUsers()
+  loading.value = true;
+  const result = await getUsers() as User[];
   users.value = result;
+  loading.value = false;
 })
 </script>
 
