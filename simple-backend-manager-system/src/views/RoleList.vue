@@ -1,8 +1,8 @@
 <!--
  * @Date: 2025-04-26 18:42:43
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2025-04-28 23:08:37
- * @FilePath: \Vue\simple-backend-manager-system\src\views\RoleList.vue
+ * @LastEditTime: 2025-04-29 22:54:02
+ * @FilePath: \simple-backend-manager-system\src\views\RoleList.vue
  * @Description: MajorTomMan @版权声明 保留文件所有权利
 -->
 <template>
@@ -25,23 +25,12 @@
           </el-button>
         </template>
       </el-table-column>
-    </el-table>
+    </el-table>V
     <!-- 分页 -->
     <pagination-control :totalItems="filteredRoles.length" :dataSource="filteredRoles"
       @page-changed="handlePageChanged" />
-
-    <!-- 编辑弹出框 -->
-    <el-dialog v-model="dialogVisible" title="编辑角色">
-      <el-form :model="editRole">
-        <el-form-item label="角色名">
-          <el-input v-model="editRole.role"></el-input>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleSubmitEdit">确定</el-button>
-      </span>
-    </el-dialog>
+    <edit-dialog :dialogVisible="dialogVisible" :dialogTitle="dialogTitle" :formData="editRole"
+      @submit="handleSubmitEdit" />
   </div>
 
 </template>
@@ -50,8 +39,11 @@ import { onMounted, reactive, ref, computed } from 'vue';
 import { getRoles, type Role } from "../mock/data.ts"
 import { ElMessage } from 'element-plus';
 import PaginationControl from '@/components/PaginationControl.vue';
+import EditDialog from '@/components/EditDialog.vue';
+
 const dialogVisible = ref(false); // 控制弹框显示与隐藏
 const editRole = reactive<Role>({ id: 0, role: "" }); // 当前编辑的角色
+const dialogTitle = ref("编辑用户")
 const loading = ref(false);
 // roles是用来缓存全部数据的
 const roles = ref<Role[]>([])
