@@ -12,7 +12,7 @@
       <input v-model="newName" placeholder="Name" />
       <button @click="handleAddUser">添加用户</button>
     </div>
-    <el-table :loading="loading" :data="newUsers" border style="width: 100%">
+    <el-table :loading="loading" :data="pagingUsers" border style="width: 100%">
       <el-table-column prop="id" label="Id" />
       <el-table-column prop="name" label="Name" />
       <el-table-column label="操作">
@@ -21,46 +21,32 @@
             删除用户
           </el-button>
         </template>
-
       </el-table-column>
-
     </el-table>
-
-    <el-button-group class="pagination-control">
-      <el-button type="primary" size="default" @click="requestPreviousPage">上一页</el-button>
-      <el-button type="primary" disabled>第{{ currentPage }}页</el-button>
-      <el-button type="primary" size="default" @click="requestNextPage">下一页</el-button>
-    </el-button-group>
-
+    <pagination-control :totalItems="filteredUsers.length" :dataSource="filteredUsers"
+      @page-changed="handlePageChanged" />
   </div>
 
 </template>
 <script setup lang="ts">
-import { computed, onMounted, ref, watchEffect } from 'vue';
+import { onMounted, ref, watchEffect } from 'vue';
 import { getUsers, type User } from "../mock/data.ts"
-
+import PaginationControl from '@/components/PaginationControl.vue';
 const loading = ref(false);
 const users = ref<User[]>([])
 const searchKeyword = ref("");
-const newUsers = ref<User[]>([])
 const newName = ref("")
-const pageSize = 5;
-let currentPage = ref(1);
-let start = 0;
-let end = start + pageSize;
-const filteredUsers = computed(() => {
-  if (!searchKeyword.value) {
-    return users.value;
-  }
-  return users.value.filter((user) =>
-    user.name.toLowerCase().includes(searchKeyword.value.toLowerCase())
-  );
-});
+const filteredUsers = ref<User[]>([])
+const pagingUsers = ref<User[]>([])
+
+
 watchEffect(() => {
-  currentPage.value = 1;
-  start = 0;
-  end = pageSize;
-  newUsers.value = filteredUsers.value.slice(start, end);
+  if (!searchKeyword.value) {
+    filteredUsers.value = users.value;
+  } else {
+    filteredUsers.value = users.value.filter((user) =>
+      user.name.toLowerCase().includes(searchKeyword.value.toLowerCase()));
+  }
 });
 const handleAddUser = () => {
   if (newName.value == "") {
@@ -75,7 +61,6 @@ const handleAddUser = () => {
   }
   users.value.push(newUser)
   newName.value = ""
-  newUsers.value = filteredUsers.value.slice(start, end);
 }
 const handleRemoveUser = (id: number) => {
   if (users.value.length == 0) {
@@ -85,27 +70,9 @@ const handleRemoveUser = (id: number) => {
   if (index !== -1) {
     users.value.splice(index, 1);
   }
-  newUsers.value = filteredUsers.value.slice(start, end);
 }
-const requestNextPage = () => {
-  if (currentPage.value * pageSize >= filteredUsers.value.length) {
-    console.log("已经到最后一页,不能再往后了");
-    return;
-  }
-  currentPage.value += 1;
-  start = (currentPage.value - 1) * pageSize;
-  end = start + pageSize;
-  newUsers.value = filteredUsers.value.slice(start, end);
-}
-const requestPreviousPage = () => {
-  if (currentPage.value === 1) {
-    console.log("已经到第一页,不能再往前了");
-    return;
-  }
-  currentPage.value -= 1;
-  start = (currentPage.value - 1) * pageSize;
-  end = start + pageSize;
-  newUsers.value = filteredUsers.value.slice(start, end);
+const handlePageChanged = (newDataSource: Array<any>, currrentPage: number) => {
+  pagingUsers.value = newDataSource
 }
 onMounted(async () => {
   loading.value = true;

@@ -12,7 +12,7 @@
       <input v-model="newAddRole" placeholder="Add roles" />
       <button @click="handleAddRole">添加角色</button>
     </div>
-    <el-table :loading="loading" :data="newRoles" border style="width: 100%">
+    <el-table :loading="loading" :data="pagingRoles" border style="width: 100%">
       <el-table-column prop="id" label="Id" />
       <el-table-column prop="role" label="Role" />
       <el-table-column label="操作">
@@ -25,14 +25,11 @@
           </el-button>
         </template>
       </el-table-column>
-
     </el-table>
+    <!-- 分页 -->
+    <pagination-control :totalItems="filteredRoles.length" :dataSource="filteredRoles"
+      @page-changed="handlePageChanged" />
 
-    <el-button-group class="pagination-control">
-      <el-button type="primary" size="default" @click="requestPreviousPage">上一页</el-button>
-      <el-button type="primary" disabled>第{{ currentPage }}页</el-button>
-      <el-button type="primary" size="default" @click="requestNextPage">下一页</el-button>
-    </el-button-group>
     <!-- 编辑弹出框 -->
     <el-dialog v-model="dialogVisible" title="编辑角色">
       <el-form :model="editRole">
@@ -42,40 +39,32 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleSubmitEdit()">确定</el-button>
+        <el-button type="primary" @click="handleSubmitEdit">确定</el-button>
       </span>
     </el-dialog>
   </div>
 
 </template>
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, watchEffect } from 'vue';
+import { onMounted, reactive, ref, computed } from 'vue';
 import { getRoles, type Role } from "../mock/data.ts"
 import { ElMessage } from 'element-plus';
+import PaginationControl from '@/components/PaginationControl.vue';
 const dialogVisible = ref(false); // 控制弹框显示与隐藏
-const editRole = reactive<Role>({ id: 1, role: "undefined" }); // 当前编辑的角色
+const editRole = reactive<Role>({ id: 0, role: "" }); // 当前编辑的角色
 const loading = ref(false);
+// roles是用来缓存全部数据的
 const roles = ref<Role[]>([])
 const searchKeyword = ref("");
-const newRoles = ref<Role[]>([])
 const newAddRole = ref("")
-const pageSize = 5;
-let currentPage = ref(1);
-let start = 0;
-let end = start + pageSize;
-const filteredRoles = computed(() => {
+const pagingRoles = ref<Role[]>([])
+const filteredRoles = computed(() => {         // 搜索过滤后数据
   if (!searchKeyword.value) {
     return roles.value;
   }
   return roles.value.filter((role) =>
     role.role.toLowerCase().includes(searchKeyword.value.toLowerCase())
   );
-});
-watchEffect(() => {
-  currentPage.value = 1;
-  start = 0;
-  end = pageSize;
-  newRoles.value = filteredRoles.value.slice(start, end);
 });
 const handleAddRole = () => {
   if (newAddRole.value == "") {
@@ -90,7 +79,6 @@ const handleAddRole = () => {
   }
   roles.value.push(newRole)
   newAddRole.value = ""
-  newRoles.value = filteredRoles.value.slice(start, end);
 }
 const handleRemoveRole = (id: number) => {
   if (roles.value.length == 0) {
@@ -100,27 +88,6 @@ const handleRemoveRole = (id: number) => {
   if (index !== -1) {
     roles.value.splice(index, 1);
   }
-  newRoles.value = filteredRoles.value.slice(start, end);
-}
-const requestNextPage = () => {
-  if (currentPage.value * pageSize >= filteredRoles.value.length) {
-    console.log("已经到最后一页,不能再往后了");
-    return;
-  }
-  currentPage.value += 1;
-  start = (currentPage.value - 1) * pageSize;
-  end = start + pageSize;
-  newRoles.value = filteredRoles.value.slice(start, end);
-}
-const requestPreviousPage = () => {
-  if (currentPage.value === 1) {
-    console.log("已经到第一页,不能再往前了");
-    return;
-  }
-  currentPage.value -= 1;
-  start = (currentPage.value - 1) * pageSize;
-  end = start + pageSize;
-  newRoles.value = filteredRoles.value.slice(start, end);
 }
 const handleEditRole = (row: { id: number; role: string; }) => {
   editRole.id = row.id;
@@ -139,6 +106,9 @@ const handleSubmitEdit = () => {
   })
   dialogVisible.value = false;
 }
+const handlePageChanged = (newDataSource: Array<any>, currrentPage: number) => {
+  pagingRoles.value = newDataSource
+}
 onMounted(async () => {
   loading.value = true;
   const result = await getRoles() as Role[];
@@ -146,13 +116,3 @@ onMounted(async () => {
   loading.value = false;
 })
 </script>
-
-<style lang="css" scoped>
-.pagination-control {
-  display: flex;
-  align-items: center;
-  /* 垂直居中 */
-  gap: 10px;
-  /* 按钮和文字之间留点空隙，可选 */
-}
-</style>
