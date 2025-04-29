@@ -20,7 +20,7 @@
           <el-button type="primary" size="default" @click="handleRemoveRole(scope.row.id)">
             删除角色
           </el-button>
-          <el-button type="primary" size="default" @click="handleEditRole()">
+          <el-button type="primary" size="default" @click="handleEditRole(scope.row)">
             编辑角色
           </el-button>
         </template>
@@ -33,13 +33,27 @@
       <el-button type="primary" disabled>第{{ currentPage }}页</el-button>
       <el-button type="primary" size="default" @click="requestNextPage">下一页</el-button>
     </el-button-group>
-
+    <!-- 编辑弹出框 -->
+    <el-dialog v-model="dialogVisible" title="编辑角色">
+      <el-form :model="editRole">
+        <el-form-item label="角色名">
+          <el-input v-model="editRole.role"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="handleSubmitEdit()">确定</el-button>
+      </span>
+    </el-dialog>
   </div>
+
 </template>
 <script setup lang="ts">
-import { computed, onMounted, ref, watchEffect } from 'vue';
+import { computed, onMounted, reactive, ref, watchEffect } from 'vue';
 import { getRoles, type Role } from "../mock/data.ts"
-
+import { ElMessage } from 'element-plus';
+const dialogVisible = ref(false); // 控制弹框显示与隐藏
+const editRole = reactive<Role>({ id: 1, role: "undefined" }); // 当前编辑的角色
 const loading = ref(false);
 const roles = ref<Role[]>([])
 const searchKeyword = ref("");
@@ -108,8 +122,22 @@ const requestPreviousPage = () => {
   end = start + pageSize;
   newRoles.value = filteredRoles.value.slice(start, end);
 }
-const handleEditRole = () => {
-
+const handleEditRole = (row: { id: number; role: string; }) => {
+  editRole.id = row.id;
+  editRole.role = row.role;
+  dialogVisible.value = true;
+}
+const handleSubmitEdit = () => {
+  if (editRole.role == "") {
+    ElMessage("角色名不能为空")
+    return;
+  }
+  roles.value.forEach(role => {
+    if (role.id == editRole.id) {
+      role.role = editRole.role
+    }
+  })
+  dialogVisible.value = false;
 }
 onMounted(async () => {
   loading.value = true;
