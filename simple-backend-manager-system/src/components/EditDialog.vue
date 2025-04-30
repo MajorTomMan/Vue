@@ -1,16 +1,9 @@
-<!--
- * @Date: 2025-04-29 22:38:33
- * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2025-04-29 22:55:54
- * @FilePath: \simple-backend-manager-system\src\components\EditDialog.vue
- * @Description: MajorTomMan @版权声明 保留文件所有权利
--->
+<!-- EditDialog.vue -->
 <template>
-  <!-- 编辑弹出框 -->
-  <el-dialog :visible="dialogVisible" :title="dialogTitle">
+  <el-dialog v-model:visible="visibleProxy" :title="dialogTitle">
     <el-form :model="formData">
       <el-form-item :label="label">
-        <el-input v-model="props.formData.value"></el-input>
+        <el-input v-model="formData.value" />
       </el-form-item>
     </el-form>
     <span class="dialog-footer">
@@ -23,22 +16,27 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
+import { computed } from 'vue';
 
 const props = defineProps({
-  dialogVisible: { type: Boolean, required: true },  // 控制弹窗显示状态
-  dialogTitle: { type: String, required: true },    // 弹窗标题
-  formData: { type: Object, required: true },       // 表单数据
-  label: { type: String, default: '名称' },         // 输入框的标签
+  visible: { type: Boolean, required: true },       // 👈 重点：这里变成 visible
+  dialogTitle: { type: String, required: true },
+  formData: { type: Object, required: true },
+  label: { type: String, default: '名称' },
 });
 
-const emit = defineEmits(['showDialog', 'submit']); // 提交事件
+const emit = defineEmits(['update:visible', 'submit']); // 👈 使用 update:visible 支持 v-model
+
+const visibleProxy = computed({
+  get: () => props.visible,
+  set: (val: boolean) => emit('update:visible', val),
+});
 
 const closeDialog = () => {
-  emit('showDialog', false); // 弹窗关闭时通知父组件
+  visibleProxy.value = false; // 👈 触发 emit 更新父组件的 dialogVisible
 };
 
 const handleSubmitEdit = () => {
-  emit('submit', props.formData); // 提交表单数据
+  emit('submit', props.formData);
 };
 </script>

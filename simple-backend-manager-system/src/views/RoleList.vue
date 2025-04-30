@@ -29,7 +29,7 @@
     <!-- 分页 -->
     <pagination-control :totalItems="filteredRoles.length" :dataSource="filteredRoles"
       @page-changed="handlePageChanged" />
-    <edit-dialog :dialogVisible="dialogVisible" :dialogTitle="dialogTitle" :formData="editRole"
+    <edit-dialog  v-model:visible="dialogVisible" :dialogTitle="dialogTitle" :formData="editRole"
       @submit="handleSubmitEdit" />
   </div>
 
@@ -84,6 +84,7 @@ const handleRemoveRole = (id: number) => {
 const handleEditRole = (row: { id: number; role: string; }) => {
   editRole.id = row.id;
   editRole.role = row.role;
+  console.log(dialogVisible);
   dialogVisible.value = true;
 }
 const handleSubmitEdit = () => {
