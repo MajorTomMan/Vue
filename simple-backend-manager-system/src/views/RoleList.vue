@@ -1,7 +1,7 @@
 <!--
  * @Date: 2025-04-26 18:42:43
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2025-04-29 22:54:02
+ * @LastEditTime: 2025-05-04 11:04:43
  * @FilePath: \simple-backend-manager-system\src\views\RoleList.vue
  * @Description: MajorTomMan @版权声明 保留文件所有权利
 -->
@@ -25,32 +25,31 @@
           </el-button>
         </template>
       </el-table-column>
-    </el-table>V
+    </el-table>
     <!-- 分页 -->
-    <pagination-control :totalItems="filteredRoles.length" :dataSource="filteredRoles"
-      @page-changed="handlePageChanged" />
-    <edit-dialog  v-model:visible="dialogVisible" :dialogTitle="dialogTitle" :formData="editRole"
-      @submit="handleSubmitEdit" />
+    <pagination-control v-model:totalItems="filteredRoles.length" v-model:dataSource="filteredRoles"
+      v-model:pageSize="pageSize" @page-changed="handlePageChanged" />
+    <edit-dialog v-model:visible="dialogVisible" v-model:formData="editRole" @submit="handleSubmitEdit">
+    </edit-dialog>
   </div>
 
 </template>
 <script setup lang="ts">
-import { onMounted, reactive, ref, computed } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { getRoles, type Role } from "../mock/data.ts"
 import { ElMessage } from 'element-plus';
 import PaginationControl from '@/components/PaginationControl.vue';
 import EditDialog from '@/components/EditDialog.vue';
-
-const dialogVisible = ref(false); // 控制弹框显示与隐藏
-const editRole = reactive<Role>({ id: 0, role: "" }); // 当前编辑的角色
-const dialogTitle = ref("编辑用户")
+const pageSize = ref(5)
+const dialogVisible = ref(false);
+const editRole = ref<Role>({ id: 0, role: "" });
 const loading = ref(false);
 // roles是用来缓存全部数据的
 const roles = ref<Role[]>([])
 const searchKeyword = ref("");
 const newAddRole = ref("")
 const pagingRoles = ref<Role[]>([])
-const filteredRoles = computed(() => {         // 搜索过滤后数据
+const filteredRoles = computed(() => {
   if (!searchKeyword.value) {
     return roles.value;
   }
@@ -82,19 +81,19 @@ const handleRemoveRole = (id: number) => {
   }
 }
 const handleEditRole = (row: { id: number; role: string; }) => {
-  editRole.id = row.id;
-  editRole.role = row.role;
-  console.log(dialogVisible);
+  editRole.value.id = row.id;
+  editRole.value.role = row.role;
   dialogVisible.value = true;
 }
-const handleSubmitEdit = () => {
-  if (editRole.role == "") {
+const handleSubmitEdit = (formData) => {
+  console.log(formData);
+  if (formData.role == "") {
     ElMessage("角色名不能为空")
     return;
   }
   roles.value.forEach(role => {
-    if (role.id == editRole.id) {
-      role.role = editRole.role
+    if (role.id == formData.id) {
+      role.role = formData.role
     }
   })
   dialogVisible.value = false;
@@ -103,9 +102,9 @@ const handlePageChanged = (newDataSource: Array<any>, currrentPage: number) => {
   pagingRoles.value = newDataSource
 }
 onMounted(async () => {
-  loading.value = true;
   const result = await getRoles() as Role[];
   roles.value = result;
-  loading.value = false;
+  filteredRoles.value = roles.value;
+  handlePageChanged(filteredRoles.value.slice(0, pageSize.value), 1);
 })
 </script>

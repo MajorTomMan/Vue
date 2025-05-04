@@ -1,42 +1,43 @@
+<!--
+ * @Date: 2025-04-29 22:38:33
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2025-05-04 10:37:38
+ * @FilePath: \simple-backend-manager-system\src\components\EditDialog.vue
+ * @Description: MajorTomMan @版权声明 保留文件所有权利
+-->
 <!-- EditDialog.vue -->
 <template>
-  <el-dialog v-model:visible="visibleProxy" :title="dialogTitle">
-    <el-form :model="formData">
-      <el-form-item :label="label">
-        <el-input v-model="formData.value" />
+  <el-dialog title="编辑菜单" v-model="dialogVisible" width="30%" class="edit-dialog">
+    <span>
+      <el-form-item v-for="(value, key) in formData" :key="key" :label="key">
+        <el-input v-model="formData[key]" :placeholder="'请输入' + key" clearable />
       </el-form-item>
-    </el-form>
-    <span class="dialog-footer">
-      <slot name="footer">
-        <el-button @click="closeDialog">取消</el-button>
-        <el-button type="primary" @click="handleSubmitEdit">确定</el-button>
-      </slot>
     </span>
+    <template #footer>
+      <span>
+        <el-button @click="handleClose">取消</el-button>
+        <el-button type="primary" @click="handleSumbit">确认</el-button>
+      </span>
+    </template>
   </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { watch } from "vue";
+const dialogVisible = defineModel('visible')
+const formData = defineModel('formData')
+const emits = defineEmits(['submit'])
 
-const props = defineProps({
-  visible: { type: Boolean, required: true },       // 👈 重点：这里变成 visible
-  dialogTitle: { type: String, required: true },
-  formData: { type: Object, required: true },
-  label: { type: String, default: '名称' },
-});
-
-const emit = defineEmits(['update:visible', 'submit']); // 👈 使用 update:visible 支持 v-model
-
-const visibleProxy = computed({
-  get: () => props.visible,
-  set: (val: boolean) => emit('update:visible', val),
-});
-
-const closeDialog = () => {
-  visibleProxy.value = false; // 👈 触发 emit 更新父组件的 dialogVisible
-};
-
-const handleSubmitEdit = () => {
-  emit('submit', props.formData);
-};
+const handleClose = () => {
+  dialogVisible.value = false
+}
+const handleSumbit = () => {
+  emits("submit", formData.value)
+}
+watch(dialogVisible, (val) => {
+  console.log('弹窗状态变了：', val)
+})
+watch(formData, (val) => {
+  console.log('表单数据：', val)
+})
 </script>

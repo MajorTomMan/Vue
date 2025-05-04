@@ -1,70 +1,62 @@
+<!--
+ * @Date: 2025-04-29 20:52:01
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2025-05-04 10:55:27
+ * @FilePath: \simple-backend-manager-system\src\components\PaginationControl.vue
+ * @Description: MajorTomMan @版权声明 保留文件所有权利
+-->
 <template>
-    <div>
-        <el-button-group class="pagination-control">
-            <el-button type="primary" size="default" @click="requestPreviousPage">上一页</el-button>
-            <el-button type="primary" disabled>第{{ currentPage }}页</el-button>
-            <el-button type="primary" size="default" @click="requestNextPage">下一页</el-button>
-        </el-button-group>
-    </div>
+  <div>
+    <el-button-group class="pagination-control">
+      <el-button type="primary" size="default" @click="requestPreviousPage">上一页</el-button>
+      <el-button type="primary" disabled>第{{ currentPage }}页</el-button>
+      <el-button type="primary" size="default" @click="requestNextPage">下一页</el-button>
+    </el-button-group>
+  </div>
 
 </template>
 <script setup lang="ts">
 import { ElMessage } from 'element-plus';
-import { ref, defineProps, defineEmits, watch } from 'vue';
-const page = defineProps({
-    pageSize: { type: Number, default: 5 },
-    totalItems: { type: Number, required: true },
-    dataSource: { type: Array<any>, required: true }
-});
+import { ref } from 'vue';
+const pageSize = defineModel("pageSize")
+const totalItems = defineModel("totalItems")
+const dataSource = defineModel("dataSource")
 const emits = defineEmits(["page-changed"])
-let currentPage = ref(1);
+const currentPage = ref(1);
+const newDataSource = ref<Object>([])
 let start = 0;
-let end = start + page.pageSize;
-let newDataSource = ref<any>([])
-
-// 初次加载或 dataSource 变化时，重新切一份数据
-watch(
-    () => page.dataSource,
-    () => {
-        currentPage.value = 1;
-        const start = (currentPage.value - 1) * page.pageSize;
-        const end = start + page.pageSize;
-        newDataSource.value = page.dataSource.slice(start, end); // 正确切片
-        emits("page-changed", newDataSource.value, currentPage.value); // emit 给父组件
-    },
-    { immediate: true }
-);
+let end = start + pageSize.value;
 
 const requestNextPage = () => {
-    if (currentPage.value * page.pageSize >= page.totalItems) {
-        ElMessage("已经到最后一页,不能再往后了");
-        return;
-    }
-    currentPage.value += 1;
-    start = (currentPage.value - 1) * page.pageSize;
-    end = start + page.pageSize;
-    newDataSource.value = page.dataSource.slice(start, end);
-    emits("page-changed", newDataSource.value, currentPage.value)
+  if (currentPage.value * pageSize.value >= totalItems.value) {
+    ElMessage("已经到最后一页,不能再往后了");
+    return;
+  }
+  currentPage.value += 1;
+  start = (currentPage.value - 1) * pageSize.value;
+  end = start + pageSize.value;
+  newDataSource.value = dataSource.value.slice(start, end);
+  emits("page-changed", newDataSource.value, currentPage.value)
 }
 const requestPreviousPage = () => {
-    if (currentPage.value === 1) {
-        ElMessage("已经到第一页,不能再往前了");
-        return;
-    }
-    currentPage.value -= 1;
-    start = (currentPage.value - 1) * page.pageSize;
-    end = start + page.pageSize;
-    newDataSource.value = page.dataSource.slice(start, end);
-    emits("page-changed", newDataSource.value, currentPage.value)
+  if (currentPage.value === 1) {
+    ElMessage("已经到第一页,不能再往前了");
+    return;
+  }
+  currentPage.value -= 1;
+  start = (currentPage.value - 1) * pageSize.value.value;
+  end = start + pageSize.value;
+  newDataSource.value = dataSource.value.slice(start, end);
+  emits("page-changed", newDataSource.value, currentPage.value)
 }
 </script>
 
 <style lang="css" scoped>
 .pagination-control {
-    display: flex;
-    align-items: center;
-    /* 垂直居中 */
-    gap: 10px;
-    /* 按钮和文字之间留点空隙，可选 */
+  display: flex;
+  align-items: center;
+  /* 垂直居中 */
+  gap: 10px;
+  /* 按钮和文字之间留点空隙，可选 */
 }
 </style>
