@@ -16,16 +16,25 @@
 
 </template>
 <script setup lang="ts">
+import type { User } from '@/mock/data';
 import { ElMessage } from 'element-plus';
-import { ref } from 'vue';
-const pageSize = defineModel("pageSize")
-const totalItems = defineModel("totalItems")
-const dataSource = defineModel("dataSource")
+import { ref, watchEffect } from 'vue';
+const pageSize = defineModel<number>("pageSize", { default: 5 })
+const totalItems = defineModel<number>("totalItems", { default: 0 })
+const dataSource = defineModel<Object[]>("dataSource", { default: () => [] })
 const emits = defineEmits(["page-changed"])
 const currentPage = ref(1);
-const newDataSource = ref<Object>([])
+const newDataSource = ref<Object[]>([])
 let start = 0;
 let end = start + pageSize.value;
+
+
+watchEffect(() => {
+  start = (currentPage.value - 1) * pageSize.value;
+  end = start + pageSize.value;
+  newDataSource.value = dataSource.value.slice(start, end);
+  emits("page-changed", newDataSource.value, currentPage.value)
+})
 
 const requestNextPage = () => {
   if (currentPage.value * pageSize.value >= totalItems.value) {
@@ -35,8 +44,6 @@ const requestNextPage = () => {
   currentPage.value += 1;
   start = (currentPage.value - 1) * pageSize.value;
   end = start + pageSize.value;
-  newDataSource.value = dataSource.value.slice(start, end);
-  emits("page-changed", newDataSource.value, currentPage.value)
 }
 const requestPreviousPage = () => {
   if (currentPage.value === 1) {
@@ -44,10 +51,8 @@ const requestPreviousPage = () => {
     return;
   }
   currentPage.value -= 1;
-  start = (currentPage.value - 1) * pageSize.value.value;
+  start = (currentPage.value - 1) * pageSize.value;
   end = start + pageSize.value;
-  newDataSource.value = dataSource.value.slice(start, end);
-  emits("page-changed", newDataSource.value, currentPage.value)
 }
 </script>
 

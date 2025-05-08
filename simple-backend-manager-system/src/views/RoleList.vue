@@ -12,7 +12,7 @@
       <input v-model="newAddRole" placeholder="Add roles" />
       <button @click="handleAddRole">添加角色</button>
     </div>
-    <el-table :loading="loading" :data="pagingRoles" border style="width: 100%">
+    <el-table :data="pagingRoles" border style="width: 100%">
       <el-table-column prop="id" label="Id" />
       <el-table-column prop="role" label="Role" />
       <el-table-column label="操作">
@@ -27,15 +27,15 @@
       </el-table-column>
     </el-table>
     <!-- 分页 -->
-    <pagination-control v-model:totalItems="filteredRoles.length" v-model:dataSource="filteredRoles"
-      v-model:pageSize="pageSize" @page-changed="handlePageChanged" />
+    <pagination-control v-model:totalItems="roles.length" v-model:dataSource="roles" v-model:pageSize="pageSize"
+      @page-changed="handlePageChanged" />
     <edit-dialog v-model:visible="dialogVisible" v-model:formData="editRole" @submit="handleSubmitEdit">
     </edit-dialog>
   </div>
 
 </template>
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, computed, watchEffect } from 'vue';
 import { getRoles, type Role } from "../mock/data.ts"
 import { ElMessage } from 'element-plus';
 import PaginationControl from '@/components/PaginationControl.vue';
@@ -49,14 +49,23 @@ const roles = ref<Role[]>([])
 const searchKeyword = ref("");
 const newAddRole = ref("")
 const pagingRoles = ref<Role[]>([])
-const filteredRoles = computed(() => {
+
+
+watchEffect(() => {
   if (!searchKeyword.value) {
-    return roles.value;
+    pagingRoles.value = roles.value.slice(0, pageSize.value);
   }
-  return roles.value.filter((role) =>
-    role.role.toLowerCase().includes(searchKeyword.value.toLowerCase())
-  );
-});
+  else {
+    pagingRoles.value = roles.value.filter((role) => {
+      if (role.role.toLowerCase().includes(searchKeyword.value.toLowerCase())) {
+        return true;
+      }
+      return false;
+    });
+  }
+})
+
+
 const handleAddRole = () => {
   if (newAddRole.value == "") {
     console.log("角色名为空")
@@ -85,7 +94,7 @@ const handleEditRole = (row: { id: number; role: string; }) => {
   editRole.value.role = row.role;
   dialogVisible.value = true;
 }
-const handleSubmitEdit = (formData) => {
+const handleSubmitEdit = (formData: { role: string; id: number; }) => {
   console.log(formData);
   if (formData.role == "") {
     ElMessage("角色名不能为空")
@@ -104,7 +113,6 @@ const handlePageChanged = (newDataSource: Array<any>, currrentPage: number) => {
 onMounted(async () => {
   const result = await getRoles() as Role[];
   roles.value = result;
-  filteredRoles.value = roles.value;
-  handlePageChanged(filteredRoles.value.slice(0, pageSize.value), 1);
+  pagingRoles.value = roles.value.slice(0, pageSize.value);
 })
 </script>

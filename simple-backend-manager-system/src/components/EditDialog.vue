@@ -5,7 +5,6 @@
  * @FilePath: \simple-backend-manager-system\src\components\EditDialog.vue
  * @Description: MajorTomMan @版权声明 保留文件所有权利
 -->
-<!-- EditDialog.vue -->
 <template>
   <el-dialog title="编辑菜单" v-model="dialogVisible" width="30%" class="edit-dialog">
     <span>
@@ -23,9 +22,8 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from "vue";
-const dialogVisible = defineModel('visible')
-const formData = defineModel('formData')
+const dialogVisible = defineModel<boolean>('visible', { default: false })
+const formData = defineModel<Record<string, any>>('formData', { default: {} })
 const emits = defineEmits(['submit'])
 
 const handleClose = () => {
@@ -34,10 +32,4 @@ const handleClose = () => {
 const handleSumbit = () => {
   emits("submit", formData.value)
 }
-watch(dialogVisible, (val) => {
-  console.log('弹窗状态变了：', val)
-})
-watch(formData, (val) => {
-  console.log('表单数据：', val)
-})
 </script>

@@ -26,33 +26,29 @@
         </template>
       </el-table-column>
     </el-table>
-    <pagination-control v-model:totalItems="filteredUsers.length" v-model:dataSource="filteredUsers"
-      v-model:pageSize="pageSize" @page-changed="handlePageChanged" />
+    <pagination-control v-model:totalItems="users.length" v-model:dataSource="users" v-model:pageSize="pageSize"
+      @page-changed="handlePageChanged" />
     <edit-dialog v-model:visible="dialogVisible" v-model:formData="editUser" @submit="handleSubmitEdit">
     </edit-dialog>
   </div>
 
 </template>
 <script setup lang="ts">
-import { onMounted, ref, watchEffect } from 'vue';
+import { onMounted, ref } from 'vue';
 import { getUsers, type User } from "../mock/data.ts"
 import PaginationControl from '@/components/PaginationControl.vue';
+import { ElMessage } from 'element-plus';
 const dialogVisible = ref(false)
+// 作为数据源
 const users = ref<User[]>([])
 const searchKeyword = ref("");
-const newName = ref("")
-const filteredUsers = ref<User[]>([])
 const pagingUsers = ref<User[]>([])
-const editUser = ref<User>({})
+const newName = ref("")
+const editUser = ref<User>({
+  id: 0,
+  name: ''
+})
 const pageSize = ref(5)
-watchEffect(() => {
-  if (!searchKeyword.value) {
-    filteredUsers.value = users.value;
-  } else {
-    filteredUsers.value = users.value.filter((user) =>
-      user.name.toLowerCase().includes(searchKeyword.value.toLowerCase()));
-  }
-});
 const handleAddUser = () => {
   if (newName.value == "") {
     console.log("用户名或者角色名为空")
@@ -75,14 +71,14 @@ const handleRemoveUser = (id: number) => {
   if (index !== -1) {
     users.value.splice(index, 1);
   }
+
 }
 const handleEditUser = (row: { id: number; name: string; }) => {
   editUser.value.id = row.id
   editUser.value.name = row.name
   dialogVisible.value = true
 }
-const handleSubmitEdit = (formData) => {
-  console.log(formData);
+const handleSubmitEdit = (formData: { name: string; id: number; }) => {
   if (formData.name == "") {
     ElMessage("用户名不能为空")
     return;
@@ -100,8 +96,7 @@ const handlePageChanged = (newDataSource: Array<any>, currrentPage: number) => {
 onMounted(async () => {
   const result = await getUsers() as User[];
   users.value = result;
-  filteredUsers.value = users.value;
-  handlePageChanged(filteredUsers.value.slice(0, pageSize.value), 1);
+  pagingUsers.value = users.value.slice(0, pageSize.value);
 })
 </script>
 
