@@ -1,3 +1,4 @@
+import request from "@/utils/requests";
 import { defineStore } from "pinia";
 
 export const useUserStore = defineStore("user", {
@@ -16,17 +17,21 @@ export const useUserStore = defineStore("user", {
         }
     },
     actions: {
-        setUserName(username) {
+        setUserName(username: string) {
             this.username = username
         },
-        setPassword(password) {
+        setPassword(password: string) {
             this.password = password
         },
-        setLogin(isLogin) {
+        setLogin(isLogin: boolean) {
             this.islogin = isLogin
         },
-        setRegister(isRegister) {
+        setRegister(isRegister: boolean) {
             this.isRegister = isRegister
         }
     }
 })
+
+export const fetchUsers = () => {
+    return request.get("https://jsonplaceholder.typicode.com/users")
+}

@@ -27,6 +27,7 @@ declare module 'vue' {
     ElRow: typeof import('element-plus/es')['ElRow']
     ElTable: typeof import('element-plus/es')['ElTable']
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
+    FormTable: typeof import('./src/components/FormTable.vue')['default']
     HeaderBar: typeof import('./src/components/HeaderBar.vue')['default']
     PaginationControl: typeof import('./src/components/PaginationControl.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

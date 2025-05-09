@@ -12,20 +12,7 @@
       <input v-model="newName" placeholder="Name" />
       <button @click="handleAddUser">添加用户</button>
     </div>
-    <el-table :data="pagingUsers" border style="width: 100%">
-      <el-table-column prop="id" label="Id" />
-      <el-table-column prop="name" label="Name" />
-      <el-table-column label="操作">
-        <template #default="scope">
-          <el-button type="primary" size="default" @click="handleRemoveUser(scope.row.id)">
-            删除用户
-          </el-button>
-          <el-button type="primary" size="default" @click="handleEditUser(scope.row)">
-            编辑用户
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+    <form-table v-model:form-data="pagingUsers" @remove-data="handleRemoveUser" @edit-data="handleEditUser" />
     <pagination-control v-model:totalItems="users.length" v-model:dataSource="users" v-model:pageSize="pageSize"
       @page-changed="handlePageChanged" />
     <edit-dialog v-model:visible="dialogVisible" v-model:formData="editUser" @submit="handleSubmitEdit">
@@ -37,6 +24,7 @@
 import { onMounted, ref } from 'vue';
 import { getUsers, type User } from "../mock/data.ts"
 import PaginationControl from '@/components/PaginationControl.vue';
+import FormTable from '@/components/FormTable.vue';
 import { ElMessage } from 'element-plus';
 const dialogVisible = ref(false)
 // 作为数据源

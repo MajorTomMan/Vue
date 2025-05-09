@@ -16,7 +16,6 @@
 
 </template>
 <script setup lang="ts">
-import type { User } from '@/mock/data';
 import { ElMessage } from 'element-plus';
 import { ref, watchEffect } from 'vue';
 const pageSize = defineModel<number>("pageSize", { default: 5 })

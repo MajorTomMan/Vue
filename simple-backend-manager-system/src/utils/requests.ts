@@ -2,7 +2,7 @@ import axios from 'axios';
 import { ElMessage } from 'element-plus';
 
 const request = axios.create({
-  baseURL: 'http://localhost:3000/api',  // 可根据你 mock 地址调整
+  baseURL: 'https://jsonplaceholder.typicode.com/users',  // 可根据你 mock 地址调整
   timeout: 5000,
 });
 
