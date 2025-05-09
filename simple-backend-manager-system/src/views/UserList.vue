@@ -28,14 +28,11 @@ import FormTable from '@/components/FormTable.vue';
 import { ElMessage } from 'element-plus';
 const dialogVisible = ref(false)
 // 作为数据源
-const users = ref<User[]>([])
+const users = ref<Record<string, any>[]>([])
 const searchKeyword = ref("");
-const pagingUsers = ref<User[]>([])
+const pagingUsers = ref<Record<string, any>[]>([])
 const newName = ref("")
-const editUser = ref<User>({
-  id: 0,
-  name: ''
-})
+const editUser = ref<Record<string, any>>()
 const pageSize = ref(5)
 const handleAddUser = () => {
   if (newName.value == "") {
@@ -61,12 +58,12 @@ const handleRemoveUser = (id: number) => {
   }
 
 }
-const handleEditUser = (row: { id: number; name: string; }) => {
+const handleEditUser = (row: Record<string, any>) => {
   editUser.value.id = row.id
   editUser.value.name = row.name
   dialogVisible.value = true
 }
-const handleSubmitEdit = (formData: { name: string; id: number; }) => {
+const handleSubmitEdit = (formData: Record<string, any>) => {
   if (formData.name == "") {
     ElMessage("用户名不能为空")
     return;
@@ -78,11 +75,11 @@ const handleSubmitEdit = (formData: { name: string; id: number; }) => {
   })
   dialogVisible.value = false;
 }
-const handlePageChanged = (newDataSource: Array<any>, currrentPage: number) => {
+const handlePageChanged = (newDataSource: Array<Record<string, any>>, currrentPage: number) => {
   pagingUsers.value = newDataSource
 }
 onMounted(async () => {
-  const result = await getUsers() as User[];
+  const result = await getUsers();
   users.value = result;
   pagingUsers.value = users.value.slice(0, pageSize.value);
 })
