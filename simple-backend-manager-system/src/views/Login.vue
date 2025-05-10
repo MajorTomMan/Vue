@@ -6,45 +6,67 @@
  * @Description: MajorTomMan @版权声明 保留文件所有权利
 -->
 <template>
-    UserName:<input v-model="username" /><br>
-    Password:<input v-model="password" /><br>
-    <button @click="handleLogin">Login</button>
-    <button @click="handleRegister">Register</button>
+    <el-container class="container">
+        <div class="main">
+            <el-form :model="user" label-width="auto" style="max-width: 600px">
+                <el-form-item label="用户名">
+                    <el-input v-model="user.username" />
+                </el-form-item>
+                <el-form-item label="密码">
+                    <el-input v-model="user.password" />
+                </el-form-item>
+            </el-form>
+            <div class="footer">
+                <el-button @click="handleRegister">
+                    注册
+                </el-button>
+                <el-button @click="handleLogin">
+                    登录
+                </el-button>
+            </div>
+        </div>
+    </el-container>
+
 </template>
 
 
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useUserStore } from '../stores/user';
+import { useUserStore, type User } from '../stores/user';
+import { ElMessage } from 'element-plus';
 const router = useRouter()
-
-const username = ref("")
-const password = ref("")
-const handleRegister = (event) => {
-    const user = useUserStore()
-    user.setRegister(false) // 重要！！！
+const user = ref<User>({
+    username: '',
+    password: '',
+    id: 0,
+    isLogin: false
+})
+const handleRegister = () => {
     router.push({ name: "register" })
 }
-const handleLogin = (event) => {
-    if (username.value == "") {
-        alert("用户名为空")
-        return
+const handleLogin = () => {
+    if (!user.value.password) {
+        ElMessage("密码不得为空")
+        return;
+    } else if (!user.value.username) {
+        ElMessage("用户名不得为空")
+        return;
     }
-    if (password.value == "") {
-        alert("密码为空")
-        return
+    const userStore = useUserStore()
+    const oldUser = userStore.queryUser(user.value.username)
+    if (oldUser != null) {
+        if (oldUser.password == user.value.password) {
+            oldUser.isLogin = true
+            router.push({ name: "dashboard", params: { userId: user.value.id } })
+        }
     }
-    const user = useUserStore()
-    user.setUserName(username.value)
-    user.setPassword(password.value)
-    user.setLogin(true)
-  router.push({ name: "dashboard" })
+    else {
+        ElMessage("未注册,先注册")
+        router.push({ name: "register" })
+    }
 }
 </script>
-
-<style lang="css" scoped>
-</style>
 
 <style lang="css" scoped>
 button {
@@ -58,5 +80,32 @@ button {
 
 button:hover {
     background-color: #369e63;
+}
+
+.container {
+    height: 100vh;
+    /* 全屏高度 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main {
+    width: 400px;
+    height: 200px;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    /* 可选：更好看 */
+    background-color: white;
+    /* 可选：避免透明背景 */
+}
+
+.footer {
+    /* 全屏高度 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 </style>

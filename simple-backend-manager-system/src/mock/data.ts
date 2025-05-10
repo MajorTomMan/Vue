@@ -1,6 +1,3 @@
-import { fetchUsers } from "@/stores/user"
-import request from "@/utils/requests"
-import type { AxiosResponse } from "axios"
 
 /*
  * @Date: 2025-04-27 23:33:45
@@ -9,21 +6,15 @@ import type { AxiosResponse } from "axios"
  * @FilePath: \Vue\simple-backend-manager-system\src\mock\data.ts
  * @Description: MajorTomMan @版权声明 保留文件所有权利
  */
-export interface User {
-  id: number
-  name: string
+
+import type { Role } from "@/stores/role";
+import request from "@/utils/requests"
+import type { AxiosResponse } from "axios"
+
+export async function getUsers(): Promise<AxiosResponse<any, any>> {
+  return await request.get<Record<string, any>[]>("https://jsonplaceholder.typicode.com/users");
 }
-export interface Role {
-  id: number
-  role: string
-}
-export interface Permission {
-  id: number
-  permission: string
-}
-export function getUsers(): Promise<AxiosResponse<any, any>> {
-  return fetchUsers()
-}
+
 
 export function getRoles() {
   return new Promise((resolve, reject) => {
